@@ -98,7 +98,7 @@ function AllWords({ words, isLoading, setWords }) {
                                         onClick={() => handleDelete(word.id)}
                                         className="text-red-500 hover:text-red-700"
                                     >
-                                        Delete
+                                        🗑️
                                     </button>
                                 </td>
                             </tr>

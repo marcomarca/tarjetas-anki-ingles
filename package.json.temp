@@ -1,7 +1,0 @@
-{
-  "name": "root-installer",
-  "version": "1.0.0",
-  "scripts": {
-    "postinstall": "npm install --prefix frontend"
-  }
-}
