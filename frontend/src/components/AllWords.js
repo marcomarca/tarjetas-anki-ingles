@@ -1,7 +1,34 @@
 import React from 'react';
+import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
+import EditableField from './EditableField';
 
-function AllWords({ words, isLoading }) {
+function AllWords({ words, isLoading, setWords }) {
+
+    const handleDelete = async (wordId) => {
+        if (window.confirm('Are you sure you want to delete this word?')) {
+            try {
+                await axios.delete(`/words/${wordId}`);
+                setWords(currentWords => currentWords.filter(w => w.id !== wordId));
+            } catch (error) {
+                console.error('Failed to delete word', error);
+                alert('Failed to delete word.');
+            }
+        }
+    };
+
+    const handleUpdateWord = async (wordId, field, value) => {
+        try {
+            const response = await axios.put(`/words/${wordId}`, { [field]: value });
+            // Update the state locally to reflect the change immediately
+            setWords(currentWords =>
+                currentWords.map(w => w.id === wordId ? response.data : w)
+            );
+        } catch (error) {
+            console.error(`Failed to update ${field}`, error);
+            // Optionally, show an error message to the user
+        }
+    };
 
     const getTimeUntilNextReview = (date) => {
         if (!date) return 'Not reviewed yet';
@@ -40,8 +67,11 @@ function AllWords({ words, isLoading }) {
                         <tr>
                             <th className="py-2 px-4 border-b text-left">Word</th>
                             <th className="py-2 px-4 border-b text-left">IPA</th>
-                            <th className="py-2 px-4 border-b text-left">Explanation</th>
+                            <th className="py-2 px-4 border-b text-left">Notes</th>
+                            <th className="py-2 px-4 border-b text-left">Tags</th>
                             <th className="py-2 px-4 border-b text-left">Next Review</th>
+                            <th className="py-2 px-4 border-b text-left">Extra Reviews</th>
+                            <th className="py-2 px-4 border-b text-left">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,8 +79,28 @@ function AllWords({ words, isLoading }) {
                             <tr key={word.id} className="hover:bg-gray-50">
                                 <td className="py-2 px-4 border-b font-semibold">{word.palabra}</td>
                                 <td className="py-2 px-4 border-b font-mono">{word.pronunciacion_IPA}</td>
-                                <td className="py-2 px-4 border-b text-sm">{word.explicacion_es}</td>
+                                <td className="py-2 px-4 border-b text-sm">
+                                    <EditableField
+                                        initialValue={word.notes}
+                                        onSave={(newValue) => handleUpdateWord(word.id, 'notes', newValue)}
+                                    />
+                                </td>
+                                <td className="py-2 px-4 border-b text-sm">
+                                    <EditableField
+                                        initialValue={word.etiquetas}
+                                        onSave={(newValue) => handleUpdateWord(word.id, 'etiquetas', newValue)}
+                                    />
+                                </td>
                                 <td className="py-2 px-4 border-b text-sm">{getTimeUntilNextReview(word.proximo_repaso)}</td>
+                                <td className="py-2 px-4 border-b text-center">{word.extra_reviews_count}</td>
+                                <td className="py-2 px-4 border-b">
+                                    <button
+                                        onClick={() => handleDelete(word.id)}
+                                        className="text-red-500 hover:text-red-700"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

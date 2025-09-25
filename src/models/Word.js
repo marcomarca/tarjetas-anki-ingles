@@ -43,6 +43,14 @@ const Word = sequelize.define('Word', {
   proximo_repaso: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+  notes: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  extra_reviews_count: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
   }
 }, {
   timestamps: false

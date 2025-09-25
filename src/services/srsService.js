@@ -1,4 +1,5 @@
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
+const sequelize = require('../database');
 const Word = require('../models/Word');
 
 /**
@@ -66,7 +67,18 @@ async function getNextReviewWord() {
     return word;
 }
 
+/**
+ * Fetches a random word from the database.
+ */
+async function getRandomWord() {
+    const word = await Word.findOne({
+        order: sequelize.random(),
+    });
+    return word;
+}
+
 module.exports = {
     updateReviewSchedule,
-    getNextReviewWord
+    getNextReviewWord,
+    getRandomWord
 };

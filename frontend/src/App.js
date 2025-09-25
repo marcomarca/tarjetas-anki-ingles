@@ -64,7 +64,7 @@ function App() {
         <main>
           {activeTab === 'review' && <ReviewCard />}
           {activeTab === 'add' && <AddWordForm onWordAdded={handleWordAdded} />}
-          {activeTab === 'all-words' && <AllWords words={words} isLoading={isLoading} />}
+          {activeTab === 'all-words' && <AllWords words={words} isLoading={isLoading} setWords={setWords} />}
         </main>
       </div>
     </div>
