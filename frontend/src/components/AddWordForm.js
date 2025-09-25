@@ -3,6 +3,7 @@ import axios from 'axios';
 
 function AddWordForm({ onWordAdded }) {
     const [word, setWord] = useState('');
+    const [notes, setNotes] = useState('');
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -12,9 +13,10 @@ function AddWordForm({ onWordAdded }) {
         setIsLoading(true);
 
         try {
-            const response = await axios.post('/words', { word });
+            const response = await axios.post('/words', { word, notes });
             setMessage(`Successfully added "${response.data.palabra}"!`);
             setWord('');
+            setNotes('');
             if(onWordAdded) {
                 onWordAdded(response.data);
             }
@@ -30,14 +32,21 @@ function AddWordForm({ onWordAdded }) {
         <div className="p-4 bg-gray-100 rounded-lg shadow-md">
             <form onSubmit={handleSubmit}>
                 <h2 className="text-xl font-bold mb-4">Add New Word</h2>
-                <div className="flex space-x-2">
+                <div className="flex flex-col space-y-2">
                     <input
                         type="text"
                         value={word}
                         onChange={(e) => setWord(e.target.value)}
                         placeholder="Enter an English word"
-                        className="flex-grow p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
+                        disabled={isLoading}
+                    />
+                    <textarea
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        placeholder="Add notes (optional)"
+                        className="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         disabled={isLoading}
                     />
                     <button

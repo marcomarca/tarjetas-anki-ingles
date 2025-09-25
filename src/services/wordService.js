@@ -83,7 +83,7 @@ async function generateAudio(word) {
     }
 }
 
-async function processAndSaveWord(word) {
+async function processAndSaveWord(word, notes) {
     const existingWord = await Word.findOne({ where: { palabra: word } });
     if (existingWord) {
         console.log(`Word "${word}" already exists in the database.`);
@@ -101,7 +101,8 @@ async function processAndSaveWord(word) {
         pronunciacion_IPA,
         audio_url,
         explicacion_es,
-        etiquetas: 'general'
+        etiquetas: 'general',
+        notes
     });
 
     return newWord;

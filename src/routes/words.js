@@ -19,13 +19,13 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { word } = req.body;
+    const { word, notes } = req.body;
     if (!word) {
         return res.status(400).json({ error: 'Word is required' });
     }
 
     try {
-        const newWord = await processAndSaveWord(word.toLowerCase().trim());
+        const newWord = await processAndSaveWord(word.toLowerCase().trim(), notes);
         res.status(201).json(newWord);
     } catch (error) {
         console.error('Error processing word:', error);

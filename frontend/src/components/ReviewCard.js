@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import EditableField from './EditableField';
 
 function ReviewCard() {
     const [card, setCard] = useState(null);
@@ -50,10 +51,18 @@ function ReviewCard() {
         }
     };
 
+    const handleUpdateWord = async (wordId, field, value) => {
+        try {
+            const response = await axios.put(`/words/${wordId}`, { [field]: value });
+            setCard(currentCard => ({ ...currentCard, ...response.data }));
+        } catch (error) {
+            console.error(`Failed to update ${field}`, error);
+        }
+    };
+
     const playAudio = (e) => {
         e.stopPropagation();
         if (card && card.audio_url) {
-            // Prepend the backend server URL if it's a relative path
             const audioUrl = card.audio_url.startsWith('/') ? `${window.location.origin}${card.audio_url}` : card.audio_url;
             const audio = new Audio(audioUrl);
             audio.play().catch(err => console.error("Audio play failed:", err));
@@ -104,11 +113,20 @@ function ReviewCard() {
                         </div>
                     </div>
                     {isFlipped && (
-                         <div className="mt-6 flex justify-around">
-                            <button onClick={() => handlePerformance('fail')} className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">Fail</button>
-                            <button onClick={() => handlePerformance('doubtful')} className="px-6 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">Doubtful</button>
-                            <button onClick={() => handlePerformance('correct')} className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Correct</button>
-                        </div>
+                        <>
+                            <div className="mt-4 p-4 bg-gray-50 rounded-lg" onClick={(e) => e.stopPropagation()}>
+                                <h4 className="font-bold text-sm mb-2">Notes</h4>
+                                <EditableField
+                                    initialValue={card.notes || ''}
+                                    onSave={(newValue) => handleUpdateWord(card.id, 'notes', newValue)}
+                                />
+                            </div>
+                            <div className="mt-6 flex justify-around">
+                                <button onClick={() => handlePerformance('fail')} className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">Fail</button>
+                                <button onClick={() => handlePerformance('doubtful')} className="px-6 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">Doubtful</button>
+                                <button onClick={() => handlePerformance('correct')} className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Correct</button>
+                            </div>
+                        </>
                     )}
                 </>
             )}
