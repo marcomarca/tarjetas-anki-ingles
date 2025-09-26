@@ -1,7 +1,13 @@
+# Log files
+*.log
+
+# Database
+database.sqlite
+
+# Dependencies
 node_modules/
-.DS_Store
-*.db
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-/public/audio/
+frontend/node_modules/
+frontend/build/
+
+# Temp files
+*.temp
